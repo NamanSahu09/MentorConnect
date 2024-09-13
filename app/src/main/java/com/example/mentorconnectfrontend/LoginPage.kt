@@ -56,7 +56,7 @@ fun LoginPage(){
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 97.dp),
+            .padding(top = 75.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
@@ -78,7 +78,7 @@ fun LoginPage(){
             )
         )
 
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(100.dp))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -93,7 +93,8 @@ fun LoginPage(){
                 )
             )
 
-            PhoneNumberField()
+            PhoneNumberField(stringResource(id = R.string.phone_number))
+            PhoneNumberField(stringResource(id = R.string.otp_field))
 
             Button(onClick = { /*TODO*/ },
                 modifier = Modifier
@@ -133,7 +134,7 @@ fun LoginPage(){
 }
 
 @Composable
-fun PhoneNumberField(){
+fun PhoneNumberField(hintText: String){
     var phoneNum by remember { mutableStateOf("") }
 
     TextField(
@@ -141,7 +142,7 @@ fun PhoneNumberField(){
         onValueChange = { phoneNum = it},
         label = {
             Text(
-                text = stringResource(R.string.phone_number),
+                text = hintText,
                 style = TextStyle(
                     fontFamily = WorkSans,
                     fontWeight = FontWeight.Medium,
@@ -154,7 +155,7 @@ fun PhoneNumberField(){
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 28.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
             .clip(RoundedCornerShape(20.dp))
     )
 }
