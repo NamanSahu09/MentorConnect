@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MentorConnectFrontEnd</string>
+    <string name="application_name">MentorConnect</string>
+    <string name="tagline">Bridging Dreams with Expertise</string>
+    <string name="team_name">GuideBridge</string>
+    <string name="continue_with_phone_no">Continue with phone number</string>
+    <string name="phone_number">Phone number</string>
+    <string name="get_otp">Get OTP</string>
+</resources>
