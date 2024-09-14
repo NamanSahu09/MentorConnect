@@ -40,11 +40,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
+var numCopy: String = ""
 
 @Preview(showBackground = true)
 @Composable
 fun LoginPage(){
+    var phoneNum by remember { mutableStateOf("") }
+    numCopy = phoneNum
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(
@@ -93,7 +96,9 @@ fun LoginPage(){
                 )
             )
 
-            PhoneNumberField()
+            PhoneNumberField(hintText = stringResource(id = R.string.phone_number),
+                phoneNum = phoneNum,
+                onValueChanged = { phoneNum = it})
 
             Button(onClick = { /*TODO*/ },
                 modifier = Modifier
@@ -133,15 +138,17 @@ fun LoginPage(){
 }
 
 @Composable
-fun PhoneNumberField(){
-    var phoneNum by remember { mutableStateOf("") }
-
+fun PhoneNumberField(
+    hintText: String,
+    phoneNum: String,
+    onValueChanged: (String) -> Unit
+){
     TextField(
         value = phoneNum,
-        onValueChange = { phoneNum = it},
+        onValueChange = onValueChanged,
         label = {
             Text(
-                text = stringResource(R.string.phone_number),
+                text = hintText,
                 style = TextStyle(
                     fontFamily = WorkSans,
                     fontWeight = FontWeight.Medium,
@@ -212,4 +219,3 @@ fun SocialLoginButtons(){
     }
 }
 
-//change 1
