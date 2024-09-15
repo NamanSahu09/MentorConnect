@@ -7,4 +7,7 @@
     <string name="phone_number">Phone number</string>
     <string name="otp_field">OTP</string>
     <string name="get_otp">Get OTP</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="otp_instr">"Enter the 6-digit code sent to you at "</string>
+    <string name="resend_otp">Resend OTP</string>
 </resources>
