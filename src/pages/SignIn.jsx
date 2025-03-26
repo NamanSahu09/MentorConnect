@@ -5,6 +5,12 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import SignInGoogle from "./signInGoogle"; 
 import bg from "../assets/login.png"
+import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../components/firebase";
+
+
+//const db = getFirestore();
+
 const SignIn = () => {
   const navigate = useNavigate();
   const auth = getAuth();
@@ -16,25 +22,33 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
-
+    setLoading(true);
+  
     try {
       await signInWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
-      console.log("Logged in user:", user);
-
-      toast.success("User signed in successfully!", {
-        position: "top-center",
-        autoClose: 3000,  
-        theme: "colored",
-      });
       
-      navigate("/dashboard");
+      if (user) {
+        // Save login timestamp in Firestore
+        await setDoc(doc(db, "Users", user.uid), {
+          lastLogin: serverTimestamp(),
+        }, { merge: true });
+  
+        console.log("Logged in user:", user);
+  
+        toast.success("User signed in successfully!", {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "colored",
+        });
+  
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.log(err);
       toast.error(err.message, { position: "top-center" });
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
