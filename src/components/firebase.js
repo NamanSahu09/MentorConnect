@@ -3,15 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyAz95w6pfWS2GLGTEtDjd9TUxxgGexA3xk",
+  authDomain: "mentor-login-auth.firebaseapp.com",
+  projectId: "mentor-login-auth",
+  storageBucket: "mentor-login-auth.firebasestorage.app",
+  messagingSenderId: "755291833002",
+  appId: "1:755291833002:web:327fb4c1c72a5c848ec6d3",
+  measurementId: "G-L32EEMZPZ7"
 };
-
 
 // Initialize Firebase
 const Bpp = initializeApp(firebaseConfig);
