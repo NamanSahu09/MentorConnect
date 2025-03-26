@@ -136,7 +136,7 @@ const Dashboard = () => {
         {/* Activities */}
         <div className="mt-6">
           <h2 className="text-xl font-bold">Activities last 7 days</h2>
-          <ul className="mt-4 bg-white p-5 rounded-lg shadow-md">
+          <ul className="bg-white p-5 rounded-lg shadow-md">
     {lastLogin ? (
       <li className="flex justify-between py-2 border-b">
         LOGIN <span>{lastLogin}</span>

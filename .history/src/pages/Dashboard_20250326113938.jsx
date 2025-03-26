@@ -23,7 +23,6 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [lastLogin, setLastLogin] = useState(null);
 
   const authInstance = getAuth(); 
 
@@ -31,30 +30,36 @@ const Dashboard = () => {
     const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
       if (user) {
         try {
-          const userRef = doc(db, "Users", user.uid);
+          const userRef = doc(db, "Users", user.uid); 
           const userSnap = await getDoc(userRef);
-  
-          if (userSnap.exists()) {
+
+          if (userSnap.exists()) 
+            {
             const data = userSnap.data();
             setUserData(data);
-  
-            // Convert Firestore timestamp to readable format
-            if (data.lastLogin) {
-              setLastLogin(data.lastLogin.toDate().toLocaleString());
+
+         
+            const hasLoggedInBefore = localStorage.getItem("hasLoggedIn");
+            if (!hasLoggedInBefore) {
+              toast.success(`Welcome, ${data.firstName}!`, {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "colored",
+              });
+              localStorage.setItem("hasLoggedIn", "true"); 
             }
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       } else {
+        localStorage.removeItem("hasLoggedIn"); 
         navigate("/signin");
       }
     });
-  
-    return () => unsubscribe();
-  }, []);
-  
 
+    return () => unsubscribe();
+  }, [authInstance, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -97,7 +102,7 @@ const Dashboard = () => {
   {/* Logout Button */}
   <button
     onClick={handleLogout}
-    className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-indigo-500 shadow-md hover:shadow-lg bg-"
+    className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-indigo-500 shadow-md hover:shadow-lg "
   >
     <FaSignOutAlt /> <span>Logout</span>
   </button>
@@ -136,18 +141,11 @@ const Dashboard = () => {
         {/* Activities */}
         <div className="mt-6">
           <h2 className="text-xl font-bold">Activities last 7 days</h2>
-          <ul className="mt-4 bg-white p-5 rounded-lg shadow-md">
-    {lastLogin ? (
-      <li className="flex justify-between py-2 border-b">
-        LOGIN <span>{lastLogin}</span>
-      </li>
-    ) : (
-      <li className="text-gray-500">No login record found</li>
-    )}
-    <li className="flex justify-between py-2 border-b">
-      COMMENT CREATED <span>12th May 2025, 3:27 pm</span>
-    </li>
-  </ul>
+          <ul className="bg-white p-5 rounded-lg shadow-md">
+            <li className="flex justify-between py-2 border-b">LOGIN <span>12th May 2025, 7:05 pm</span></li>
+            <li className="flex justify-between py-2 border-b">COMMENT CREATED <span>12th May 2025, 3:27 pm</span></li>
+            <li className="flex justify-between py-2">LOGIN <span>12th June 2022, 3:26 pm</span></li>
+          </ul>
         </div>
       </main>
 

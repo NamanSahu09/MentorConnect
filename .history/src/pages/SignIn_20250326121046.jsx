@@ -64,7 +64,7 @@ const SignIn = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-1/2 bg-gray-800 flex flex-col justify-center items-center text-white p-50">
+      <div className="w-1/2 bg-gray-800 flex flex-col justify-center items-center text-white p-30">
         <div className="bg-gray-900 p-10 rounded-2xl shadow-lg w-96">
           <h2 className="text-3xl font-semibold text-center text-blue-400 mb-6">Sign In</h2>
 

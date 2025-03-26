@@ -23,7 +23,6 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [lastLogin, setLastLogin] = useState(null);
 
   const authInstance = getAuth(); 
 
@@ -133,10 +132,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Activities */}
         <div className="mt-6">
-          <h2 className="text-xl font-bold">Activities last 7 days</h2>
-          <ul className="mt-4 bg-white p-5 rounded-lg shadow-md">
+  <h2 className="text-xl font-bold">Activities last 7 days</h2>
+  <ul className="bg-white p-5 rounded-lg shadow-md">
     {lastLogin ? (
       <li className="flex justify-between py-2 border-b">
         LOGIN <span>{lastLogin}</span>
@@ -148,7 +146,8 @@ const Dashboard = () => {
       COMMENT CREATED <span>12th May 2025, 3:27 pm</span>
     </li>
   </ul>
-        </div>
+</div>
+
       </main>
 
       {/* Right Sidebar */}

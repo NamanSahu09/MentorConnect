@@ -6,10 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import SignInGoogle from "./signInGoogle"; 
 import bg from "../assets/login.png"
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../components/firebase";
 
 
-//const db = getFirestore();
+const db = getFirestore();
 
 const SignIn = () => {
   const navigate = useNavigate();

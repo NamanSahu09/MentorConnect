@@ -9,7 +9,7 @@ import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../components/firebase";
 
 
-//const db = getFirestore();
+// Removed redundant declaration of db
 
 const SignIn = () => {
   const navigate = useNavigate();
