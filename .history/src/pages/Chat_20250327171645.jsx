@@ -97,16 +97,16 @@ const Chat = () => {
 
         {/* Main Chat Section */}
         <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md w-full">
-          <h1 className="text-2xl font-semibold mb-4 w-full">Chat Room</h1>
+          <h1 className="text-2xl font-semibold mb-4">Chat Room</h1>
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
             {/* Left Pane - Chat List */}
-            <div className="w-1/2 bg-gray-50 p-4 border-r">
+            <div className="w-1/3 bg-gray-50 p-4 border-r">
               <input type="text" className="w-full p-2 mb-4 border rounded-lg" placeholder="Search chat..." />
             </div>
 
             {/* Right Pane - Chat Window */}
-            <div className="w-full flex flex-col p-4">
-              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-full mx-auto">
+            <div className="w-2/3 flex flex-col p-4">
+              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-3/4 mx-auto">
                 {messages.map((msg) => (
                   <div key={msg.id} className={`mb-2 flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'} items-center`}>
                   {msg.sender !== user?.displayName && <span className="text-2xl">{getRandomEmoji(msg.sender.length)}</span>}

@@ -106,7 +106,7 @@ const Chat = () => {
 
             {/* Right Pane - Chat Window */}
             <div className="w-full flex flex-col p-4">
-              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-full mx-auto">
+              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-3/4 mx-auto">
                 {messages.map((msg) => (
                   <div key={msg.id} className={`mb-2 flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'} items-center`}>
                   {msg.sender !== user?.displayName && <span className="text-2xl">{getRandomEmoji(msg.sender.length)}</span>}
