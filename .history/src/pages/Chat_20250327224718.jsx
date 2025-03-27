@@ -125,7 +125,7 @@ const Chat = () => {
                   </div>
                 ))}
                  {/* Yeh div chat ko last message tak scroll karega */}
-                  <div ref={messagesEndRef}></div>
+  <div ref={messagesEndRef}></div>
               </div>
               <div className="mt-4 flex">
                 <input

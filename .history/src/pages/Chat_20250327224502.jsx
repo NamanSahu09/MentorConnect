@@ -12,10 +12,6 @@ const getRandomEmoji = (seed) => {
   const emojiList = ["👩‍🎓", "👨‍🎓", "🧑‍💻", "👨‍💻", "👩‍💼", "👨‍🏫", "🧑‍🏫", "👨‍🔬", "👩‍🔬"];
   return emojiList[seed % emojiList.length];
 };
-
-
-
-
 const Chat = () => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
@@ -57,18 +53,6 @@ const Chat = () => {
       console.error("Error sending message:", error);
     }
   };
-
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  
-
 
   const handleLogout = async () => {
     try {
@@ -124,8 +108,6 @@ const Chat = () => {
                     {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
                   </div>
                 ))}
-                 {/* Yeh div chat ko last message tak scroll karega */}
-                  <div ref={messagesEndRef}></div>
               </div>
               <div className="mt-4 flex">
                 <input

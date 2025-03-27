@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from "../components/firebase";
@@ -13,11 +13,7 @@ const getRandomEmoji = (seed) => {
   return emojiList[seed % emojiList.length];
 };
 
-
-
-
 const Chat = () => {
-  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -45,29 +41,33 @@ const Chat = () => {
   }, []);
 
   const sendMessage = async () => {
-    if (newMessage.trim() === "") return;
-    try {
-      await addDoc(collection(db, "messages"), {
-        text: newMessage,
-        sender: user?.displayName || "Anonymous",
-        timestamp: serverTimestamp(),
-      });
-      setNewMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+  if (newMessage.trim() === "") return;
 
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  let senderName = user?.displayName || "Anonymous";
+
+  // Fetch user details from Firestore if displayName is missing
+  if (!user?.displayName) {
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists() && userDoc.data().name) {
+        senderName = userDoc.data().name;
+      }
+    } catch (error) {
+      console.error("Error fetching user name:", error);
     }
-  };
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  
+  }
+
+  try {
+    await addDoc(collection(db, "messages"), {
+      text: newMessage,
+      sender: senderName,
+      timestamp: serverTimestamp(),
+    });
+    setNewMessage("");
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
 
 
   const handleLogout = async () => {
@@ -124,8 +124,6 @@ const Chat = () => {
                     {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
                   </div>
                 ))}
-                 {/* Yeh div chat ko last message tak scroll karega */}
-                  <div ref={messagesEndRef}></div>
               </div>
               <div className="mt-4 flex">
                 <input

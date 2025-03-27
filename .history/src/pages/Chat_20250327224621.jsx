@@ -124,8 +124,6 @@ const Chat = () => {
                     {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
                   </div>
                 ))}
-                 {/* Yeh div chat ko last message tak scroll karega */}
-                  <div ref={messagesEndRef}></div>
               </div>
               <div className="mt-4 flex">
                 <input
