@@ -17,7 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Auth and Firestore
-export const auth = getAuth(app); // Ensure auth uses the same app instance
-export const db = getFirestore(app); // Ensure Firestore uses the same app instance
+export const auth = getAuth(app);
+export const db = getFirestore(app); 
 export default app;
 export { serverTimestamp };

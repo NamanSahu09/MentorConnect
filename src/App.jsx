@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Chat from "./pages/Chat";
-
+import Profile from "./pages/Profile";
 function App() {
   return (
     <Router>
@@ -18,6 +18,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} /> 
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

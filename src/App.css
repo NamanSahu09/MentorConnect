@@ -26,6 +26,13 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Soft shadow */
 }
 
+.sidebar-item {
+  transition: background 0.3s ease-in-out, transform 0.2s;
+}
+.sidebar-item:hover {
+  background: #eff6ff;
+  transform: scale(1.05);
+}
 
 
 @keyframes logo-spin {
