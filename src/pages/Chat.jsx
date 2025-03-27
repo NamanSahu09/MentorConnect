@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from "../components/firebase";
@@ -13,7 +13,11 @@ const getRandomEmoji = (seed) => {
   return emojiList[seed % emojiList.length];
 };
 
+
+
+
 const Chat = () => {
+  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -54,6 +58,18 @@ const Chat = () => {
     }
   };
 
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
+  
+
+
   const handleLogout = async () => {
     try {
       await signOut(authInstance);
@@ -68,8 +84,7 @@ const Chat = () => {
   return (
     <>
       <TopNav />
-      <div className="flex h-screen bg-gray-100 w-full">
-        {/* Sidebar */}
+      <div className="flex h-screen bg-gray-100">
         <aside className="w-1/5 min-w-[250px] bg-white p-5 shadow-lg flex flex-col items-start space-y-6">
           <nav className="w-full space-y-4">
             {["Home", "Post", "Meetings", "Chat", "Profile"].map((name, index) => (
@@ -87,41 +102,32 @@ const Chat = () => {
               </Link>
             ))}
           </nav>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 hover:bg-red-500 hover:text-white shadow-md"
-          >
+          <button onClick={handleLogout} className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 hover:bg-red-500 hover:text-white shadow-md">
             <FaSignOutAlt /> <span>Logout</span>
           </button>
         </aside>
-
-        {/* Main Chat Section */}
-        <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md w-full">
-          <h1 className="text-2xl font-semibold mb-4 w-full">Chat Room</h1>
+        <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md">
+          <h1 className="text-2xl font-semibold mb-4">Chat Room</h1>
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-            {/* Left Pane - Chat List */}
-            <div className="w-1/2 bg-gray-50 p-4 border-r">
+            <div className="w-1/3 bg-gray-50 p-4 border-r">
               <input type="text" className="w-full p-2 mb-4 border rounded-lg" placeholder="Search chat..." />
             </div>
-
-            {/* Right Pane - Chat Window */}
-            <div className="w-full flex flex-col p-4">
-              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-full mx-auto">
+            <div className="w-2/3 flex flex-col p-4">
+              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md">
                 {messages.map((msg) => (
                   <div key={msg.id} className={`mb-2 flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'} items-center`}>
-                  {msg.sender !== user?.displayName && <span className="text-2xl">{getRandomEmoji(msg.sender.length)}</span>}
-                  <div className={`px-3 py-2 rounded-md inline-block max-w-sm text-sm shadow-md ${msg.sender === user?.displayName ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
-                    <p className="text-xs font-semibold">{msg.sender} <span className="text-[10px] text-gray-500">{msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}</span></p>
-                    <p className="mt-1">{msg.text}</p>
+                    {msg.sender !== user?.displayName && <span className="text-2xl">{getRandomEmoji(msg.sender.length)}</span>}
+                    <div className={`px-3 py-2 rounded-md inline-block max-w-sm text-sm shadow-md ${msg.sender === user?.displayName ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                      <p className="text-xs font-semibold">{msg.sender} <span className="text-[10px] text-gray-500">{msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}</span></p>
+                      <p className="mt-1">{msg.text}</p>
+                    </div>
+                    {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
                   </div>
-                  {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
-                </div>
-                
                 ))}
+                 {/* Yeh div chat ko last message tak scroll karega */}
+                  <div ref={messagesEndRef}></div>
               </div>
-
-              {/* Message Input */}
-              <div className="mt-4 flex w-3/4 mx-auto">
+              <div className="mt-4 flex">
                 <input
                   type="text"
                   className="flex-1 p-2 border border-gray-300 rounded-lg"

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import SignInGoogle from "./signInGoogle"; 
+import SignInGoogle from "../components/signInGoogle"; 
 import bg from "../assets/login.png"
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../components/firebase";

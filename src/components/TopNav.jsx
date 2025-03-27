@@ -21,7 +21,7 @@ const TopNav = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-between p-4 bg-white shadow-md border-b-2">
+    <div className="flex w-screen items-center justify-between px-4 py-3 bg-white shadow-md border-b-2">
       {/* Logo */}
       <h2 className="text-xl font-bold text-gray-700 flex items-center space-x-2">
         <span className="text-blue-500 text-xl font-bold">{`</>`}</span>
