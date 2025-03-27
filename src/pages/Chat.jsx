@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from "../components/firebase";
-import { FaHome, FaUserFriends, FaComments, FaCalendarAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaHome, FaUserFriends, FaComments, FaCalendarAlt, FaSignOutAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import TopNav from "../components/TopNav";
+
+const getRandomEmoji = (seed) => {
+  const emojiList = ["👩‍🎓", "👨‍🎓", "🧑‍💻", "👨‍💻", "👩‍💼", "👨‍🏫", "🧑‍🏫", "👨‍🔬", "👩‍🔬"];
+  return emojiList[seed % emojiList.length];
+};
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -40,8 +45,8 @@ const Chat = () => {
     try {
       await addDoc(collection(db, "messages"), {
         text: newMessage,
-        sender: user.displayName || "Anonymous",
-        timestamp: new Date()
+        sender: user?.displayName || "Anonymous",
+        timestamp: serverTimestamp(),
       });
       setNewMessage("");
     } catch (error) {
@@ -89,35 +94,29 @@ const Chat = () => {
             <FaSignOutAlt /> <span>Logout</span>
           </button>
         </aside>
-        
+
         {/* Main Chat Section */}
-        <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md">
-          <h1 className="text-2xl font-semibold mb-4">Chat Room</h1>
+        <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md w-full">
+          <h1 className="text-2xl font-semibold mb-4 w-full">Chat Room</h1>
           <div className="flex border border-gray-300 rounded-lg overflow-hidden">
             {/* Left Pane - Chat List */}
-            <div className="w-1/3 bg-gray-50 p-4 border-r">
+            <div className="w-1/2 bg-gray-50 p-4 border-r">
               <input type="text" className="w-full p-2 mb-4 border rounded-lg" placeholder="Search chat..." />
-              <div className="bg-white p-3 rounded-lg shadow mb-2 cursor-pointer flex items-center">
-                <FaUser className="text-blue-500 mr-2" />
-                <div>
-                  <p className="font-bold">Student 3</p>
-                  <p className="text-sm text-gray-500">The question you gave</p>
-                </div>
-              </div>
             </div>
-            
+
             {/* Right Pane - Chat Window */}
-            <div className="w-2/3 flex flex-col p-4">
-              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-3/4 mx-auto">
+            <div className="w-full flex flex-col p-4">
+              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md w-full mx-auto">
                 {messages.map((msg) => (
-                  <div key={msg.id} className={`mb-4 flex items-center space-x-2 ${msg.sender === user?.displayName ? 'justify-end' : ''}`}>
-                    {msg.sender !== user?.displayName && <img src="https://via.placeholder.com/40" className="w-10 h-10 rounded-full" />}
-                    <div>
-                      <p className="text-gray-700 font-semibold">{msg.sender} <span className="text-xs text-gray-400">{new Date(msg.timestamp?.seconds * 1000).toLocaleTimeString()}</span></p>
-                      <p className={`p-2 rounded-lg inline-block ${msg.sender === user?.displayName ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>{msg.text}</p>
-                    </div>
-                    {msg.sender === user?.displayName && <img src="https://via.placeholder.com/40" className="w-10 h-10 rounded-full" />}
+                  <div key={msg.id} className={`mb-2 flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'} items-center`}>
+                  {msg.sender !== user?.displayName && <span className="text-2xl">{getRandomEmoji(msg.sender.length)}</span>}
+                  <div className={`px-3 py-2 rounded-md inline-block max-w-sm text-sm shadow-md ${msg.sender === user?.displayName ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                    <p className="text-xs font-semibold">{msg.sender} <span className="text-[10px] text-gray-500">{msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}</span></p>
+                    <p className="mt-1">{msg.text}</p>
                   </div>
+                  {msg.sender === user?.displayName && <span className="text-2xl">{getRandomEmoji(user.uid.length)}</span>}
+                </div>
+                
                 ))}
               </div>
 
