@@ -19,7 +19,6 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/chat" element={<Chat />} /> 
-        <Route path="/post" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
