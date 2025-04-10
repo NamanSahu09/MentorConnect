@@ -1,6 +1,6 @@
 
 import TopNav from "../components/TopNav";
-import LeftBar from "../components/LeftBar";
+import LeftBar from "../components/leftBar";
 
 
 import { useEffect, useState } from "react";
