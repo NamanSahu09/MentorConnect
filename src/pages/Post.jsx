@@ -1,6 +1,7 @@
 
 import TopNav from "../components/TopNav";
-import LeftBar from "../components/leftBar";
+import LeftBar from "../components/LeftBar";
+
 
 import { useEffect, useState } from "react";
 import { db, auth } from "../components/firebase";
