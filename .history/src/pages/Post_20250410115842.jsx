@@ -105,34 +105,29 @@ const handleCommentSubmit = async () => {
 
 
         {/* Middle Section - Posts */}
-       {/* Middle Section - Posts */}
-<div className="w-3/5 p-6 space-y-4">
-  {posts.length > 0 ? (
-    posts.map((post) => (
-      <div key={post.id} className="bg-white p-4 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-2">
-          <h4 className="font-bold text-gray-700">{post.author}</h4>
-          <p className="text-xs text-gray-500">
-            {post.createdAt?.toDate().toLocaleString() || "Just now"}
-          </p>
-        </div>
-        <p className="text-gray-800 mb-2">{post.description}</p>
-        <div className="text-sm text-gray-500 flex gap-4">
-          <span>🗨 {selectedPostId === post.id ? comments.length : "comments"}</span>
-          <button
-            onClick={() => setSelectedPostId(post.id)}
-            className="text-blue-500 font-semibold"
-          >
-            reply
-          </button>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 text-center">No posts yet...</p>
-  )}
-</div>
+        <div className="w-3/5 p-6 space-y-4">
+          {/* Each post */}
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="font-bold text-gray-700">Naman Swastik Sahu</h4>
+              <p className="text-xs text-gray-500">June 22, 2022 · 2:11 PM</p>
+            </div>
+            <p className="text-gray-800 mb-2">
+              Tomorrow we will be meeting in the dept to discuss some important topics, do come in time.
+            </p>
+            <div className="text-sm text-gray-500 flex gap-4">
+              <span>🗨 2 comments</span>
+              <button className="text-blue-500 font-semibold">reply</button>
+            </div>
+          </div>
 
+          {/* Another post */}
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h4 className="font-bold text-gray-700">Student 3</h4>
+            <p className="text-sm text-gray-500">June 22, 2022 · 2:34 PM</p>
+            <p className="text-blue-600 underline mt-1">w3school</p>
+          </div>
+        </div>
 
        
        {/* Right Section - Comments */}
@@ -141,17 +136,13 @@ const handleCommentSubmit = async () => {
   <div className="flex-1 overflow-y-auto pr-1">
     <h3 className="font-bold text-lg mb-3">Comments</h3>
     <div className="space-y-3 text-sm">
-  {comments.length > 0 ? (
-    comments.map((c, i) => (
-      <div key={i} className="bg-gray-100 p-2 rounded">
-        <strong className="text-blue-600">{c.author}</strong> – {c.text}
+      <div className="bg-gray-100 p-2 rounded">
+        <strong className="text-blue-600">Student 3</strong> – yes sir, I will be present there
       </div>
-    ))
-  ) : (
-    <p className="text-gray-400 text-sm italic">No comments yet...</p>
-  )}
-</div>
-
+      <div className="bg-gray-100 p-2 rounded">
+        <strong className="text-purple-600">Mintu Moni Kurmi</strong> – Ok come soon
+      </div>
+    </div>
      {/* Bottom - Input */}
   <div className="mt-3">
   <input
