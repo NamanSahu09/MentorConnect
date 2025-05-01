@@ -1,8 +1,5 @@
-
 import TopNav from "../components/TopNav";
 import LeftBar from "../components/LeftBar";
-
-
 import { useEffect, useState } from "react";
 import { db, auth } from "../components/firebase";
 import {
@@ -15,27 +12,22 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
-
-
-
- // ✅ new
-
-
-
 const Post = () => {
 const [posts, setPosts] = useState([]);
 const [comments, setComments] = useState([]);
 const [inputText, setInputText] = useState(""); // ✅ Common state
 
-const [commentInput, setCommentInput] = useState("");
-const [postInput, setPostInput] = useState("");
+//const [commentInput, setCommentInput] = useState("");
+//const [postInput, setPostInput] = useState("");
 const [user, setUser] = useState(null);
 const [selectedPostId, setSelectedPostId] = useState(null);
+const [selectedUser, setSelectedUser] = useState(null);
 
 
 useEffect(() => {
   onAuthStateChanged(auth, (u) => {
-    if (u) setUser(u);
+    if (u) 
+      setUser(u);
   });
 
   const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
@@ -45,6 +37,8 @@ useEffect(() => {
       setSelectedPostId(snapshot.docs[0].id);
     }
   });
+
+ // const subscribe = onSnapshot(query(collection(db,"posts")))
 
   return () => unsubscribe();
 }, []);
@@ -73,9 +67,6 @@ const handleAddPost = async () => {
 
   setInputText("");
 };
-
-
-
 
 
 const handleCommentSubmit = async () => {
@@ -124,8 +115,9 @@ const handleCommentSubmit = async () => {
             onClick={() => setSelectedPostId(post.id)}
             className="text-blue-500 font-semibold"
           >
-            reply
+            Reply
           </button>
+          
         </div>
       </div>
     ))

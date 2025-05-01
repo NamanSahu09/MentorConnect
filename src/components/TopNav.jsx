@@ -20,6 +20,10 @@ const TopNav = () => {
     return () => unsubscribe();
   }, []);
 
+//useEffect(() => )
+
+
+
   return (
     <div className="flex w-screen items-center justify-between px-4 py-3 bg-white shadow-md border-b-2">
       {/* Logo */}

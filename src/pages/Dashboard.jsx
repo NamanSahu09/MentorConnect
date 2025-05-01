@@ -6,10 +6,24 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { auth, db } from "../components/firebase"; 
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
 
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 // Navigation items
+
+
+ 
 
 const navItems = [
   { name: "Home", path: "/dashboard", icon: <FaHome /> },
@@ -21,11 +35,30 @@ const navItems = [
 
 const Dashboard = () => {
   const [userData, setUserData] = useState(null);
+  const [lastLogin, setLastLogin] = useState(null);
+  const [postCount, setPostCount] = useState(0);       // ✅ Corrected
+  const [commentCount, setCommentCount] = useState(0); // ✅ Corrected
+
   const navigate = useNavigate();
   const location = useLocation(); 
-  const [lastLogin, setLastLogin] = useState(null);
+  const authInstance = getAuth();
 
-  const authInstance = getAuth(); 
+  // ✅ Count fetching inside useEffect
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const postSnapshot = await getDocs(collection(db, "posts"));
+        setPostCount(postSnapshot.size);
+
+        const commentSnapshot = await getDocs(collection(db, "comments"));
+        setCommentCount(commentSnapshot.size);
+      } catch (err) {
+        console.error("Error fetching post/comment count:", err);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
@@ -110,28 +143,71 @@ const Dashboard = () => {
         </h1>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4 my-6">
-          <div className="bg-red-500 text-white p-5 rounded-lg">
-            <h3 className="text-lg">Total Mentees</h3>
-            <p className="text-3xl font-bold">1</p>
-          </div>
-          <div className="bg-purple-500 text-white p-5 rounded-lg">
-            <h3 className="text-lg">Total Posts</h3>
-            <p className="text-3xl font-bold">5</p>
-          </div>
-          <div className="bg-blue-500 text-white p-5 rounded-lg">
-            <h3 className="text-lg">Total Comments</h3>
-            <p className="text-3xl font-bold">3</p>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
+  {/* Total Mentees */}
+  <div className="bg-white bg-opacity-70 backdrop-blur-md shadow-xl border border-gray-200 p-6 rounded-2xl flex items-center justify-between transition hover:scale-105">
+    <div>
+      <h3 className="text-gray-700 font-semibold text-lg">Total Mentees</h3>
+      <p className="text-4xl font-bold text-red-500 mt-2">1</p>
+    </div>
+    <div className="text-red-500 text-5xl">
+      👥
+    </div>
+  </div>
+
+  {/* Total Posts */}
+  <div className="bg-white bg-opacity-70 backdrop-blur-md shadow-xl border border-gray-200 p-6 rounded-2xl flex items-center justify-between transition hover:scale-105">
+    <div>
+      <h3 className="text-gray-700 font-semibold text-lg">Total Posts</h3>
+      <p className="text-4xl font-bold text-purple-500 mt-2">{postCount}</p>
+    </div>
+    <div className="text-purple-500 text-5xl">
+      📝
+    </div>
+  </div>
+
+  {/* Total Comments */}
+  <div className="bg-white bg-opacity-70 backdrop-blur-md shadow-xl border border-gray-200 p-6 rounded-2xl flex items-center justify-between transition hover:scale-105">
+    <div>
+      <h3 className="text-gray-700 font-semibold text-lg">Total Comments</h3>
+      <p className="text-4xl font-bold text-blue-500 mt-2">{commentCount}</p>
+    </div>
+    <div className="text-blue-500 text-5xl">
+      💬
+    </div>
+  </div>
+</div>
+
 
         {/* Graph (Placeholder) */}
         <div className="bg-white p-5 rounded-lg shadow-md">
-          <h2 className="text-lg font-bold">Activity Chart</h2>
-          <div className="h-40 bg-gray-200 mt-3 flex items-center justify-center text-gray-500">
-            Chart Placeholder
-          </div>
-        </div>
+  <h2 className="text-lg font-bold mb-4">Activity Chart (Last 7 Days)</h2>
+  <ResponsiveContainer width="100%" height={300}>
+    <LineChart
+      data={[
+        { date: 'Apr 25', logins: 5, posts: 3, chats: 12 },
+        { date: 'Apr 26', logins: 7, posts: 2, chats: 9 },
+        { date: 'Apr 27', logins: 4, posts: 5, chats: 14 },
+        { date: 'Apr 28', logins: 6, posts: 1, chats: 11 },
+        { date: 'Apr 29', logins: 8, posts: 4, chats: 16 },
+        { date: 'Apr 30', logins: 3, posts: 6, chats: 13 },
+        { date: 'May 1',  logins: 9, posts: 7, chats: 18 },
+      ]}
+      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="date" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="logins" stroke="#8884d8" name="Logins" />
+      <Line type="monotone" dataKey="posts" stroke="#82ca9d" name="Posts" />
+      <Line type="monotone" dataKey="chats" stroke="#ff7300" name="Chats" />
+    </LineChart>
+  </ResponsiveContainer>
+</div>
+
+
 
         {/* Activities */}
         <div className="mt-6">

@@ -7,11 +7,27 @@ import SignInGoogle from "../components/signInGoogle";
 import bg from "../assets/login.png"
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../components/firebase";
-
+import { sendPasswordResetEmail } from "firebase/auth";
 
 //const db = getFirestore();
 
 const SignIn = () => {
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast.error("Please enter your email to reset password.", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password reset email sent!", { position: "top-center" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to send reset email.", { position: "top-center" });
+    }
+  };
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -103,6 +119,15 @@ const SignIn = () => {
               <span className="text-gray-300">&nbsp;Show password</span>
             </div>
 
+            {/* <button
+              type="button"
+              className="w-full p-3 mt-2 rounded-lg font-semibold bg-yellow-500 hover:bg-yellow-600 transition text-white"
+              onClick={handleResetPassword}
+              disabled={loading}
+            >
+              Forgot Password?
+            </button> */}
+
             <button
               type="submit"
               className={`w-full p-3 mt-3 rounded-lg font-semibold bg-blue-500 hover:bg-blue-500 transition ${
@@ -128,6 +153,12 @@ const SignIn = () => {
               Sign Up
             </span>
           </p>
+
+          <p className="mt-2 text-center text-blue-300 cursor-pointer hover:underline" onClick={handleResetPassword}>
+             Forgot Password?
+          </p>
+
+
         </div>
       </div>
     </div>
