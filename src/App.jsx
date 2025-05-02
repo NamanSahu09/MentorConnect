@@ -8,10 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import Post from "./pages/Post";
+import Meeting from "./pages/Meeting"; 
+
 function App() {
   return (
     <Router>
-      {/* ToastContainer should be outside Routes */}
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -21,6 +22,7 @@ function App() {
         <Route path="/chat" element={<Chat />} /> 
         <Route path="/post" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/meetings" element={<Meeting />} /> 
       </Routes>
     </Router>
   );

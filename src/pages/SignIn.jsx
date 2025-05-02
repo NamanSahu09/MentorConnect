@@ -8,6 +8,7 @@ import bg from "../assets/login.png"
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../components/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 
 //const db = getFirestore();
 
@@ -45,21 +46,29 @@ const SignIn = () => {
       const user = auth.currentUser;
       
       if (user) {
-        // Save login timestamp in Firestore
+        // Save last login to user profile
         await setDoc(doc(db, "Users", user.uid), {
           lastLogin: serverTimestamp(),
         }, { merge: true });
-  
+      
+        
+        await addDoc(collection(db, "logins"), {
+          uid: user.uid,
+          email: user.email,
+          timestamp: serverTimestamp(),
+        });
+      
         console.log("Logged in user:", user);
-  
+      
         toast.success("User signed in successfully!", {
           position: "top-center",
           autoClose: 3000,
           theme: "colored",
         });
-  
+      
         navigate("/dashboard");
       }
+      
     } catch (err) {
       console.log(err);
       toast.error(err.message, { position: "top-center" });
