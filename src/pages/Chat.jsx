@@ -1,5 +1,3 @@
-// Full refactored Chat.jsx with 1-to-1 chat support AND public all-chat feature
-
 import React, { useState, useEffect, useRef } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import {
@@ -37,7 +35,6 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  // Current user setup
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authInstance, (user) => {
       if (user) {
@@ -49,7 +46,6 @@ const Chat = () => {
     return () => unsubscribe();
   }, []);
 
-  // Fetch all users except current
   useEffect(() => {
     const fetchUsers = async () => {
       const usersSnapshot = await getDocs(collection(db, "Users"));
@@ -61,7 +57,6 @@ const Chat = () => {
     if (user) fetchUsers();
   }, [user]);
 
-  // Set chat ID
   useEffect(() => {
     if (selectedUser && user) {
       const id =
@@ -74,7 +69,6 @@ const Chat = () => {
     }
   }, [selectedUser, user]);
 
-  // Fetch chat messages
   useEffect(() => {
     if (!chatId) return;
     const q = query(collection(db, "messages", chatId, "chat"), orderBy("timestamp"));
@@ -123,48 +117,51 @@ const Chat = () => {
   return (
     <>
       <TopNav />
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gradient-to-br from-slate-100 to-slate-200">
         {/* Sidebar Navigation */}
-        <aside className="w-1/5 min-w-[250px] bg-white p-5 shadow-lg flex flex-col items-start space-y-6">
-          <nav className="w-full space-y-4">
+        <aside className="w-64 bg-white p-6 shadow-md flex flex-col space-y-6">
+          <nav className="space-y-3">
             {["Home", "Post", "Meetings", "Chat", "Profile"].map((name, index) => (
               <Link
                 key={name}
                 to={name === "Home" ? "/dashboard" : `/${name.toLowerCase()}`}
-                className={`flex items-center space-x-2 w-full px-3 py-2 rounded-lg transition duration-300 ${
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-base font-medium transition ${
                   location.pathname ===
                   (name === "Home" ? "/dashboard" : `/${name.toLowerCase()}`)
-                    ? "bg-blue-500 text-white font-bold shadow-lg"
-                    : "text-gray-600 hover:text-blue-500"
+                    ? "bg-blue-600 text-white shadow"
+                    : "text-gray-700 hover:bg-blue-100"
                 }`}
               >
                 {index === 0 ? <FaHome /> : index === 1 ? <FaUserFriends /> : index === 2 ? <FaCalendarAlt /> : index === 3 ? <FaComments /> : <FaUserFriends />}
                 <span>{name}</span>
               </Link>
             ))}
-          </nav>
-          <button
+            <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 hover:bg-red-500 hover:text-white shadow-md"
+            className="mt-auto w-full flex items-center justify-center gap-2 text-red-600 px-4 py-2 rounded-lg bg-gray-100 hover:bg-red-600 hover:text-white"
           >
             <FaSignOutAlt /> <span>Logout</span>
           </button>
+          </nav>
+          
         </aside>
 
         {/* Chat Panel */}
-        <main className="flex-1 p-4 flex flex-col bg-gray-100 shadow-md">
-          <h1 className="text-2xl font-semibold mb-4">Chat Room</h1>
-          <div className="flex border border-gray-300 rounded-lg overflow-hidden h-full">
+        <main className="flex-1 flex flex-col p-6 gap-4">
+          <div className="bg-white shadow rounded-xl flex h-full">
             {/* User List */}
-            <div className="w-1/3 bg-gray-50 p-4 border-r overflow-y-auto">
+            <div className="w-1/3 border-r p-4 space-y-3 overflow-y-auto">
+              <h2 className="text-lg font-semibold">Chats</h2>
               <input
                 type="text"
-                className="w-full p-2 mb-4 border rounded-lg"
+                className="w-full p-2 border rounded-md"
                 placeholder="Search users..."
               />
               <div
                 onClick={() => setSelectedUser(null)}
-                className={`p-2 cursor-pointer rounded-md mb-2 ${!selectedUser ? "bg-blue-100 font-bold" : "hover:bg-gray-200"}`}
+                className={`p-2 rounded-md cursor-pointer ${
+                  !selectedUser ? "bg-blue-100 font-semibold" : "hover:bg-gray-100"
+                }`}
               >
                 🌍 All Chat
               </div>
@@ -172,10 +169,10 @@ const Chat = () => {
                 <div
                   key={u.uid}
                   onClick={() => setSelectedUser(u)}
-                  className={`p-2 cursor-pointer rounded-md mb-2 ${
+                  className={`p-2 rounded-md cursor-pointer ${
                     selectedUser?.uid === u.uid
-                      ? "bg-blue-100 font-bold"
-                      : "hover:bg-gray-200"
+                      ? "bg-blue-100 font-semibold"
+                      : "hover:bg-gray-100"
                   }`}
                 >
                   {u.firstName + " " + u.lastName}
@@ -184,37 +181,43 @@ const Chat = () => {
             </div>
 
             {/* Chat Box */}
-            <div className="w-2/3 flex flex-col p-4">
-              <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md">
+            <div className="w-2/3 flex flex-col p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4 rounded-md shadow-inner">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`mb-2 flex ${msg.sender === user?.uid ? "justify-end" : "justify-start"} items-center`}
+                    className={`mb-3 flex ${
+                      msg.sender === user?.uid ? "justify-end" : "justify-start"
+                    }`}
                   >
                     <div
-                      className={`px-3 py-2 rounded-md inline-block max-w-sm text-sm shadow-md ${msg.sender === user?.uid ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}
+                      className={`px-4 py-2 rounded-lg text-sm max-w-xs ${
+                        msg.sender === user?.uid
+                          ? "bg-blue-600 text-white"
+                          : "bg-white border border-gray-300"
+                      }`}
                     >
-                      <p className="text-xs font-semibold">
-                        {msg.senderName || "User"} <span className="text-[10px] text-gray-500">{msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}</span>
+                      <p className="text-xs font-semibold mb-1">
+                        {msg.senderName || "User"} • {msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}
                       </p>
-                      <p className="mt-1">{msg.text}</p>
+                      <p>{msg.text}</p>
                     </div>
                   </div>
                 ))}
                 <div ref={messagesEndRef}></div>
               </div>
 
-              <div className="mt-4 flex">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  className="flex-1 p-2 border border-gray-300 rounded-lg"
+                  className="flex-1 p-3 border border-gray-300 rounded-lg shadow-sm"
                   placeholder="Type your message..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                 />
                 <button
-                  className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  className="px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow"
                   onClick={sendMessage}
                 >
                   Send
