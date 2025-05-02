@@ -2,15 +2,29 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import mentorGif from "../assets/mentorHome.gif"; 
 import bg1 from "../assets/bg-2.png"
+import { db } from "../components/firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+
 const Home = () => {
   const [role, setRole] = useState("Admin");
   const navigate = useNavigate();
 
-  const handleNext = () => 
-    {
-    if (role === "Mentor") navigate("/signin");
-    else alert("Baaki roles ka setup baad me karenge");
-    };
+  const handleNext = async () => {
+    if (role === "Mentor" || role === "Mentee" || role === "Admin") {
+      try {
+        await addDoc(collection(db, "UserRoles"), {
+          role: role,
+          selectedAt: serverTimestamp()
+        });
+        navigate("/signin", { state: { role } }); // pass role to signin page
+      } catch (error) {
+        console.error("Error storing role:", error);
+      }
+    } else {
+      alert("Role selection invalid");
+    }
+  };
+  
 
   return (
     <div className="flex h-screen">

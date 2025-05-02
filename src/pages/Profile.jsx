@@ -1,23 +1,18 @@
-// Mentor Profile Page with Detailed Academic Background and Photo Upload
+// Mentee Profile Page with Detailed Academic Background and Hostel Info
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {
-  FaHome,
-  FaUserFriends,
-  FaComments,
-  FaCalendarAlt,
-  FaSignOutAlt,
-} from "react-icons/fa";
 import { auth, db } from "../components/firebase";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { FaHome, FaUserFriends, FaComments, FaCalendarAlt, FaSignOutAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const navItems = [
   { name: "Home", path: "/dashboard", icon: <FaHome /> },
   { name: "Post", path: "/post", icon: <FaUserFriends /> },
   { name: "Meetings", path: "/meetings", icon: <FaCalendarAlt /> },
+  { name: "Academics", path: "/academics", icon: <FaUserFriends /> },
   { name: "Chat", path: "/chat", icon: <FaComments /> },
   { name: "Profile", path: "/profile", icon: <FaUserFriends /> },
 ];
@@ -29,6 +24,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const [editMode, setEditMode] = useState(false);
   const [photoURL, setPhotoURL] = useState("");
+  const [role, setRole] = useState("Mentee");
   const authInstance = getAuth();
   const storage = getStorage();
 
@@ -38,25 +34,13 @@ const Profile = () => {
         try {
           const userRef = doc(db, "Users", user.uid);
           const userSnap = await getDoc(userRef);
-  
+
           if (userSnap.exists()) {
             const data = userSnap.data();
             setUserData(data);
             setFormData(data);
             setPhotoURL(data.photoURL || "");
-          } else {
-            // 👇 DEFAULT USER FILL HO JAYEGA FIRESTORE ME
-            const defaultData = {
-              email: user.email,
-              firstName: user.displayName?.split(" ")[0] || "",
-              lastName: user.displayName?.split(" ")[1] || "",
-              role: "Mentor",
-              photoURL: user.photoURL || "",
-            };
-            await setDoc(userRef, defaultData);
-            setUserData(defaultData);
-            setFormData(defaultData);
-            setPhotoURL(defaultData.photoURL || "");
+            setRole(data.role);
           }
         } catch (err) {
           toast.error("Failed to load profile data");
@@ -66,10 +50,9 @@ const Profile = () => {
         navigate("/signin");
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
-  
 
   const handleLogout = async () => {
     try {
@@ -95,18 +78,6 @@ const Profile = () => {
       toast.error("Update failed");
     }
   };
-
-// const handleLogout1 = async () => {
-//   try {
-//     const user1 = auth.currentUser;
-//     const ref1 = doc(db, "Users" , user.uid);
-//     const dataToSave1 = { ...formData, photoURL};
-
-//   }
-//   catch{
-//     toast.error("Update Failed");
-//   }
-// }
 
   const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
@@ -134,11 +105,10 @@ const Profile = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       <aside className="w-1/5 bg-white p-5 shadow-lg flex flex-col items-start space-y-6">
         <h2 className="text-xl font-bold text-gray-700 flex items-center space-x-2">
           <span className="text-blue-500 text-xl font-bold">{`</>`}</span>
-          <span>Mentor</span>
+          <span>{role}</span>
         </h2>
         <nav className="w-full space-y-4">
           {navItems.map((item) => (
@@ -164,7 +134,7 @@ const Profile = () => {
       </aside>
 
       <main className="flex-1 p-6 overflow-y-auto">
-        <h1 className="text-3xl font-bold mb-6">Mentor Profile</h1>
+        <h1 className="text-3xl font-bold mb-6">{role} Profile</h1>
 
         {!userData ? (
           <p>Loading...</p>
@@ -172,31 +142,60 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white shadow rounded-lg p-4 flex flex-col items-center">
               <img
-                src={photoURL || `https://ui-avatars.com/api/?name=${userData.firstName || "M"}&background=0D8ABC&color=fff`}
+                src={photoURL || `https://ui-avatars.com/api/?name=${userData.firstName || "U"}&background=0D8ABC&color=fff`}
                 alt="Profile"
                 className="w-24 h-24 rounded-full mb-4"
               />
-              <h2 className="text-xl font-semibold">
-                {`${userData.firstName || ""} ${userData.middleName || ""} ${userData.lastName || ""}`}
-              </h2>
-              <p className="text-sm text-gray-500">{userData.email || "—"}</p>
+              <h2 className="text-xl font-semibold">{`${userData.firstName || ""} ${userData.middleName || ""} ${userData.lastName || ""}`}</h2>
+              <p className="text-sm text-gray-500">{userData.email}</p>
             </div>
 
             <div className="bg-white shadow rounded-lg p-4">
-              <h3 className="font-bold mb-2">Academic Background 📘</h3>
-              <p><strong>Department:</strong> {userData.department || "—"}</p>
-              <p><strong>Programme:</strong> {userData.programme || "—"}</p>
-              <p><strong>Qualification:</strong> {userData.qualification || "—"}</p>
-              <p><strong>University/College:</strong> {userData.educationInstitute || "—"}</p>
-              <p><strong>Experience:</strong> {userData.experience || "—"}</p>
-              <p><strong>Specialization:</strong> {userData.specialization || "—"}</p>
+              <h3 className="font-bold mb-2">Academic Information 🎓</h3>
+              <p><strong>Department:</strong> {userData.department}</p>
+              <p><strong>Programme:</strong> {userData.programme}</p>
+              <p><strong>Semester:</strong> {userData.semester}</p>
+              <p><strong>Enrollment No:</strong> {userData.enrollmentNumber}</p>
+              <p><strong>Enrollment Year:</strong> {userData.enrollmentYear}</p>
+              <p><strong>Mentored By:</strong> {userData.mentoredBy}</p>
             </div>
 
             <div className="bg-white shadow rounded-lg p-4">
-              <h3 className="font-bold mb-2">Contact Details 📞</h3>
-              <p><strong>Email ID:</strong> {userData.email || "—"}</p>
-              <p><strong>Phone Number:</strong> {userData.phone || "—"}</p>
-              <p><strong>Address:</strong> {userData.address || "—"}</p>
+              <h3 className="font-bold mb-2">Contact Info 📞</h3>
+              <p><strong>Email:</strong> {userData.email}</p>
+              <p><strong>Phone:</strong> {userData.phone}</p>
+              <p><strong>Address:</strong> {userData.address}</p>
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-4 col-span-2">
+              <h3 className="font-bold mb-2">Personal Details 🧍</h3>
+              <p><strong>Gender:</strong> {userData.gender}</p>
+              <p><strong>Blood Group:</strong> {userData.bloodGroup}</p>
+              <p><strong>Home Place:</strong> {userData.homePlace}</p>
+              <p><strong>Hobbies:</strong> {userData.hobbies}</p>
+              <p><strong>Guardian:</strong> {userData.guardianName}</p>
+              <p><strong>Guardian Phone:</strong> {userData.guardianPhone}</p>
+              <p><strong>Guardian Address:</strong> {userData.guardianAddress}</p>
+              <p><strong>Family Details:</strong> {userData.familyDetails}</p>
+            </div>
+
+            <div className="bg-white shadow rounded-lg p-4 col-span-2">
+              <h3 className="font-bold mb-2">Hostel Info 🏨</h3>
+              <p><strong>Hostel Boarder:</strong> {userData.hostelBoarder ? "Yes" : "No"}</p>
+              {userData.hostelBoarder && (
+                <>
+                  <p><strong>Hostel Name:</strong> {userData.hostelName}</p>
+                  <p><strong>Warden:</strong> {userData.wardenName}</p>
+                  <p><strong>Warden Phone:</strong> {userData.wardenPhone}</p>
+                </>
+              )}
+              {!userData.hostelBoarder && (
+                <>
+                  <p><strong>Contact Person:</strong> {userData.residenceContactName}</p>
+                  <p><strong>Contact No:</strong> {userData.residenceContactPhone}</p>
+                  <p><strong>Address:</strong> {userData.residenceContactAddress}</p>
+                </>
+              )}
             </div>
 
             <div className="text-right col-span-3">
@@ -210,7 +209,7 @@ const Profile = () => {
           </div>
         ) : (
           <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-xl font-bold mb-4">Edit Mentor Profile</h2>
+            <h2 className="text-xl font-bold mb-4">Edit {role} Profile</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {renderInput("First Name", "firstName")}
               {renderInput("Middle Name", "middleName")}
@@ -220,12 +219,25 @@ const Profile = () => {
               {renderInput("Address", "address")}
               {renderInput("Department", "department")}
               {renderInput("Programme", "programme")}
-              {renderInput("Qualification", "qualification")}
-              {renderInput("University/Institute", "educationInstitute")}
-              {renderInput("Experience (Years)", "experience")}
-              {renderInput("Specialization", "specialization")}
+              {renderInput("Semester", "semester")}
+              {renderInput("Enrollment No", "enrollmentNumber")}
+              {renderInput("Enrollment Year", "enrollmentYear")}
+              {renderInput("Mentored By", "mentoredBy")}
+              {renderInput("Gender", "gender")}
+              {renderInput("Blood Group", "bloodGroup")}
+              {renderInput("Home Place", "homePlace")}
               {renderInput("Hobbies", "hobbies")}
-              
+              {renderInput("Guardian Name", "guardianName")}
+              {renderInput("Guardian Phone", "guardianPhone")}
+              {renderInput("Guardian Address", "guardianAddress")}
+              {renderInput("Family Details", "familyDetails")}
+              {renderInput("Hostel Boarder", "hostelBoarder")}
+              {renderInput("Hostel Name", "hostelName")}
+              {renderInput("Warden Name", "wardenName")}
+              {renderInput("Warden Phone", "wardenPhone")}
+              {renderInput("Residence Contact Name", "residenceContactName")}
+              {renderInput("Residence Contact Phone", "residenceContactPhone")}
+              {renderInput("Residence Contact Address", "residenceContactAddress")}
               <div className="flex flex-col">
                 <label className="font-semibold mb-1">Profile Photo</label>
                 <input type="file" accept="image/*" onChange={handlePhotoUpload} />

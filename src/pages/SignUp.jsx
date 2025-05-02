@@ -1,5 +1,6 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth ,db} from "../components/firebase";
+import { useLocation } from "react-router-dom";
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import bg from "../assets/login.png"
 const SignUp = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+const role = location.state?.role || "Mentor"; 
+
 
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -19,7 +23,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(""); 
-  const [loading, setLoading] = useState(false); // Disable button on submission
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,14 +42,13 @@ const SignUp = () => {
     
       if(user)
       {
-        await setDoc(doc(db,"Users",user.uid)
-        ,{
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          department: department,
-          email: email,
-          role: "Mentor",
+        await setDoc(doc(db, "Users", user.uid), {
+          firstName,
+          middleName,
+          lastName,
+          department,
+          email,
+          role, 
         });
       }
       toast.success("User created successfully!", {
@@ -71,9 +74,10 @@ const SignUp = () => {
       {/* Left Section */}
       <div className="w-1/2 flex flex-col justify-center items-center p-50">
       <h1 className="text-4xl font-bold">
-          <span className="text-blue-500">Mentor</span>
-          <span className="text-inherit"> Sign Up</span>
-      </h1>
+  <span className="text-blue-500">{role}</span>
+  <span className="text-inherit"> Sign Up</span>
+</h1>
+
 
         <img src={bg} alt="Sign Up" className="w-80 mt-5" />
       </div>
