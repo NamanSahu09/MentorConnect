@@ -3,6 +3,7 @@ import TopNav from "../components/TopNav";
 import LeftBar from "../components/LeftBar";
 import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const db = getFirestore();
 const auth = getAuth();
@@ -67,11 +68,11 @@ const Payment = () => {
             <p className="text-gray-600 mb-6 text-sm">
               Get direct access to top mentors, 1-on-1 doubt sessions, and personalized support.
             </p>
-            <img
-              src="https://cdni.iconscout.com/illustration/premium/thumb/online-payment-4818123-4006506.png"
-              alt="payment"
-              className="w-40 h-40 mx-auto mb-6"
-            />
+            <DotLottieReact
+      src="https://lottie.host/0f649ef9-a6dc-4be3-98bb-7184fd1cd8a0/mrE3iP8v6v.lottie"
+      loop
+      autoplay
+             />
             <button
               onClick={handlePayment}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition"
