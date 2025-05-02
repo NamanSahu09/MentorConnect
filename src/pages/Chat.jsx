@@ -81,10 +81,15 @@ const Chat = () => {
   const sendMessage = async () => {
     if (newMessage.trim() === "") return;
     try {
+      const userSnap = await getDocs(collection(db, "Users"));
+      const currentUser = userSnap.docs.find((doc) => doc.id === user.uid)?.data();
+      const role = currentUser?.role || "User";
+
       await addDoc(collection(db, "messages", chatId, "chat"), {
         text: newMessage,
         sender: user?.uid,
-        senderName: user?.displayName,
+        senderName: user?.displayName || `${currentUser.firstName} ${currentUser.lastName}`,
+        senderRole: role, // ✅ Added role
         timestamp: serverTimestamp(),
       });
       setNewMessage("");
@@ -137,13 +142,12 @@ const Chat = () => {
               </Link>
             ))}
             <button
-            onClick={handleLogout}
-            className="mt-auto w-full flex items-center justify-center gap-2 text-red-600 px-4 py-2 rounded-lg bg-gray-100 hover:bg-red-600 hover:text-white"
-          >
-            <FaSignOutAlt /> <span>Logout</span>
-          </button>
+              onClick={handleLogout}
+              className="mt-auto w-full flex items-center justify-center gap-2 text-red-600 px-4 py-2 rounded-lg bg-gray-100 hover:bg-red-600 hover:text-white"
+            >
+              <FaSignOutAlt /> <span>Logout</span>
+            </button>
           </nav>
-          
         </aside>
 
         {/* Chat Panel */}
@@ -198,7 +202,11 @@ const Chat = () => {
                       }`}
                     >
                       <p className="text-xs font-semibold mb-1">
-                        {msg.senderName || "User"} • {msg.timestamp?.seconds ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString() : "Just now"}
+                        {msg.senderName || "User"} •{" "}
+                        <span className="italic text-gray-500">{msg.senderRole || "User"}</span> •{" "}
+                        {msg.timestamp?.seconds
+                          ? new Date(msg.timestamp.seconds * 1000).toLocaleTimeString()
+                          : "Just now"}
                       </p>
                       <p>{msg.text}</p>
                     </div>

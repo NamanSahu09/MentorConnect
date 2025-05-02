@@ -11,11 +11,12 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const Post = () => {
 const [posts, setPosts] = useState([]);
 const [comments, setComments] = useState([]);
-const [inputText, setInputText] = useState(""); // ✅ Common state
+const [inputText, setInputText] = useState(""); 
 
 //const [commentInput, setCommentInput] = useState("");
 //const [postInput, setPostInput] = useState("");
@@ -72,14 +73,22 @@ const handleAddPost = async () => {
 const handleCommentSubmit = async () => {
   if (!user || !inputText.trim() || !selectedPostId) return;
 
-  await addDoc(collection(db, "posts", selectedPostId, "comments"), {
-    text: inputText,
-    author: user.displayName || "Anonymous",
-    createdAt: serverTimestamp(),
-  });
+  try {
+    const userDoc = await getDoc(doc(db, "Users", user.uid));
+    const userData = userDoc.exists() ? userDoc.data() : {};
 
-  setInputText("");
+    await addDoc(collection(db, "posts", selectedPostId, "comments"), {
+      text: inputText,
+      author: `${userData.firstName || "Anonymous"} ${userData.lastName || ""}`,
+      createdAt: serverTimestamp(),
+    });
+
+    setInputText("");
+  } catch (err) {
+    console.error("Comment Error:", err);
+  }
 };
+
 
 
 
