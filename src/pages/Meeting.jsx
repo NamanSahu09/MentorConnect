@@ -53,17 +53,31 @@ export default function MeetingsPage() {
 
   const handleSchedule = async () => {
     if (!description || !link || !datetime || !user) return;
-    await addDoc(collection(db, "meetings"), {
-      description,
-      link,
-      datetime,
-      createdAt: serverTimestamp(),
-      createdBy: user.displayName || user.email,
-    });
-    setDescription("");
-    setLink("");
-    setDatetime("");
+  
+    try {
+      await addDoc(collection(db, "meetings"), {
+        description,
+        link,
+        datetime,
+        createdAt: serverTimestamp(),
+        createdBy: user.displayName || user.email,
+      });
+  
+      
+      await addDoc(collection(db, "notifications"), {
+        message: `📅 New meeting scheduled by ${user.displayName || user.email}`,
+        timestamp: serverTimestamp(),
+        readBy: [],
+      });
+  
+      setDescription("");
+      setLink("");
+      setDatetime("");
+    } catch (err) {
+      console.error("Meeting creation failed:", err);
+    }
   };
+  
 
   return (
     <>
