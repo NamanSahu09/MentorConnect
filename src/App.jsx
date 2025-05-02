@@ -9,6 +9,8 @@ import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import Post from "./pages/Post";
 import Meeting from "./pages/Meeting"; 
+import Earnings from "./pages/Earnings";import Payment from "./pages/Payment";
+
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/post" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/meetings" element={<Meeting />} /> 
+        <Route path="/earnings" element={<Earnings />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
     </Router>
   );

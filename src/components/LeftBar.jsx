@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaHome, FaUserFriends, FaCalendarAlt, FaComments, FaSignOutAlt } from "react-icons/fa";
-
+import { FaHome, FaUserFriends, FaCalendarAlt, FaComments, FaSignOutAlt, FaRupeeSign } from "react-icons/fa";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 const authInstance = getAuth();
+const db = getFirestore();
 
 const navItems = [
   { name: "Home", path: "/dashboard", icon: <FaHome /> },
@@ -12,11 +14,32 @@ const navItems = [
   { name: "Meetings", path: "/meetings", icon: <FaCalendarAlt /> },
   { name: "Chat", path: "/chat", icon: <FaComments /> },
   { name: "Profile", path: "/profile", icon: <FaUserFriends /> },
+ 
 ];
 
 const LeftBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMentor, setIsMentor] = useState(false);
+  const [isMentee, setIsMentee] = useState(false);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
+      if (user) {
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          console.log("User Data:", userData);
+          const role = userData.role?.toLowerCase(); // ✅ Add this line
+          setIsMentor(role === "mentor");
+          setIsMentee(role === "mentee");
+        }
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+  
 
   const handleLogout = async () => {
     try {
@@ -29,41 +52,68 @@ const LeftBar = () => {
     }
   };
 
+  
+
+
+
+
+
   return (
     <aside className="h-full flex flex-col justify-between bg-white shadow-lg p-4 w-full">
+    <nav className="space-y-4 mb-6">
+  {navItems.map((item) => (
+    <Link
+      key={item.name}
+      to={item.path}
+      className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition duration-300 ${
+        location.pathname === item.path
+          ? "bg-blue-500 text-white font-bold shadow-lg"
+          : "text-blue-600 hover:text-blue-800"
+      }`}
+    >
+      {item.icon} <span>{item.name}</span>
+    </Link>
+  ))}
 
-    
-      
-  {/* Navigation */}
-  <nav className="space-y-4 mb-6">
-    {navItems.map((item) => (
-      <Link
-        key={item.name}
-        to={item.path}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition duration-300 ${
-          location.pathname === item.path
-            ? "bg-blue-500 text-white font-bold shadow-lg"
-            : "text-blue-600 hover:text-blue-800"
-        }`}
-      >
-        {item.icon} <span>{item.name}</span>
-      </Link>
-    ))}
-    <div className="pt-4 border-t">
-    <button
-        onClick={handleLogout}
-        className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-indigo-500 shadow-md hover:shadow-lg bg-"
-      >
-        <FaSignOutAlt /> <span>Logout</span>
-      </button>
-  </div>
-  </nav>
+  {/* 👇 Only show to mentors: OUTSIDE map() */}
+  {isMentor && (
+    <Link
+      to="/earnings"
+      className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition duration-300 ${
+        location.pathname === "/earnings"
+          ? "bg-blue-500 text-white font-bold shadow-lg"
+          : "text-green-700 hover:text-green-900"
+      }`}
+    >
+      <FaRupeeSign /> <span>Earnings</span>
+    </Link>
+  )}
 
-  {/* Logout Button */}
-  
-</aside>
+{isMentee && (
+  <Link
+    to="/payment"
+    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition duration-300 ${
+      location.pathname === "/payment"
+        ? "bg-yellow-500 text-white font-bold shadow-lg"
+        : "text-yellow-700 hover:text-yellow-900"
+    }`}
+  >
+    💳 <span>Go Premium</span>
+  </Link>
+)}
 
 
+
+        <div className="pt-4 border-t">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center space-x-2 text-red-500 px-4 py-2 rounded-lg bg-gray-200 transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-indigo-500 shadow-md hover:shadow-lg"
+          >
+            <FaSignOutAlt /> <span>Logout</span>
+          </button>
+        </div>
+      </nav>
+    </aside>
   );
 };
 
