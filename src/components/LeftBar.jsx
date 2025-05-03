@@ -30,8 +30,7 @@ const LeftBar = () => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           console.log("User Data:", userData);
-          const role = userData.role?.toLowerCase(); // ✅ Add this line
-          setIsMentor(role === "mentor");
+          const role = userData.role?.toLowerCase(); 
           setIsMentee(role === "mentee");
         }
       }
@@ -45,7 +44,7 @@ const LeftBar = () => {
     try {
       await signOut(authInstance);
       toast.info("Logged out successfully!", { position: "top-center" });
-      navigate("/signin");
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Logout failed!");

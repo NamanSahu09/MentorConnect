@@ -1,27 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import TopNav from "../components/TopNav";
 import LeftBar from "../components/LeftBar";
 import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const db = getFirestore();
 const auth = getAuth();
 const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 const Payment = () => {
+  const [statusMsg, setStatusMsg] = useState(null);
+  const [customAmount, setCustomAmount] = useState(100); // default ₹100
+
   const handlePayment = async () => {
-    const amount = 100 * 100; // ₹100 in paisa
+    const amountInPaise = parseInt(customAmount) * 100;
+    if (customAmount <= 0) {
+      toast.error("❌ Amount must be greater than ₹0", { position: "top-center" });
+      return;
+    }
 
     const options = {
       key: razorpayKey,
-      amount: amount,
+      amount: amountInPaise,
       currency: "INR",
       name: "MentorConnect Premium",
       description: "Unlock premium mentorship features",
       image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
       handler: async function (response) {
         console.log("✅ Payment success", response);
+        setStatusMsg("✅ Thanks for your payment!");
         alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
 
         try {
@@ -38,6 +48,15 @@ const Payment = () => {
         } catch (error) {
           console.error("❌ Firestore update failed:", error);
         }
+      },
+      modal: {
+        ondismiss: function () {
+          setStatusMsg("❌ Payment cancelled or failed. Please try again.");
+          toast.error("❌ Payment cancelled or failed. Please try again.", {
+            position: "top-center",
+          });
+          console.log("Payment popup closed by user");
+        },
       },
       prefill: {
         name: "Naman Swastik",
@@ -69,16 +88,36 @@ const Payment = () => {
               Get direct access to top mentors, 1-on-1 doubt sessions, and personalized support.
             </p>
             <DotLottieReact
-      src="https://lottie.host/0f649ef9-a6dc-4be3-98bb-7184fd1cd8a0/mrE3iP8v6v.lottie"
-      loop
-      autoplay
-             />
+              src="https://lottie.host/0f649ef9-a6dc-4be3-98bb-7184fd1cd8a0/mrE3iP8v6v.lottie"
+              loop
+              autoplay
+              style={{ width: "220px", height: "220px", margin: "0 auto 1.5rem" }}
+            />
+            <div className="mb-4">
+              <label htmlFor="amount" className="block mb-1 text-gray-700 font-medium">
+                Enter Amount (₹) 
+              </label> &nbsp;
+              <input
+                type="number"
+                id="amount"
+                value={customAmount}
+                onChange={(e) => setCustomAmount(e.target.value)}
+                min={1}
+                className="w-40 px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
             <button
               onClick={handlePayment}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition"
             >
-              Pay ₹100 to Go Premium
+              Pay ₹{customAmount} to Go Premium
             </button>
+            {statusMsg && (
+              <p className="text-sm mt-4 font-medium text-center text-gray-700">
+                {statusMsg}
+              </p>
+            )}
+
             <p className="text-xs text-gray-400 mt-4">
               Powered by Razorpay • Test Mode
             </p>
