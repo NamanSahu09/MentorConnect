@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TopNav from "../components/TopNav";
 import LeftBar from "../components/LeftBar";
+import FloatingChatAssistant from "../components/FloatingChatAssistant"; 
 import {
   getAuth,
   onAuthStateChanged,
@@ -27,6 +28,14 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { auth, db } from "../components/firebase";
 import { useNavigate } from "react-router-dom";
+
+
+import ChatAssistantWrapper from "../components/ChatAssistantWrapper";
+//import FloatingChatAssistant from "../components/FloatingChatAssistant";
+
+
+
+
 
 const Dashboard = () => {
   const [userData, setUserData] = useState(null);
@@ -165,6 +174,16 @@ const Dashboard = () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
+
+          <div className="fixed bottom-6 right-6 w-[350px] z-50">
+          <FloatingChatAssistant />
+          </div>
+
+
+
+
+
+
 
           <div className="bg-white p-5 rounded-lg shadow-md mb-8">
             <h2 className="text-lg font-bold mb-2">Recent Activity</h2>
