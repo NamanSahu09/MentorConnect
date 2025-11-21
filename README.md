@@ -2,7 +2,7 @@
 
 <img src="./img1Banner.png" width="100%" alt="MentorConnect Banner"/>
 
-# 🚀 MentorConnect  
+#  MentorConnect  
 ### *A Modern Student–Mentor Platform built with React + Firebase*
 
 <br/>
@@ -16,7 +16,7 @@
 
 ---
 
-## ✨ Overview
+##  Overview
 
 MentorConnect is a simple and effective mentoring platform designed for universities, communities, and skill-based programs.  
 It allows mentors and mentees to communicate, chat, track meetings, share posts, and manage their learning journey — all in one place.
@@ -30,7 +30,7 @@ The project focuses on:
 
 ---
 
-## 🖼️ Screenshots  
+##  Screenshots  
 *(Replace paths with actual images later)*
 
 | Home | Dashboard | Chat |
