@@ -141,11 +141,8 @@ firebase init
 firebase deploy
 
 🤝 Contributing
-
 Feel free to fork the repo, open issues, or submit pull requests.
 
 👤 Author
-
 Naman Swastik Sahu
 
-<div align="center"> Made with ❤️ using React + Firebase </div> ```
