@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./banner.png" width="100%" alt="MentorConnect Banner"/>
+<img src="./img1Banner.png" width="100%" alt="MentorConnect Banner"/>
 
 # 🚀 MentorConnect  
 ### *A Modern Student–Mentor Platform built with React + Firebase*
